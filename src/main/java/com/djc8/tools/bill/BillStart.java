@@ -27,8 +27,6 @@ public class BillStart {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-
-
             System.out.println(configModel);
 
             start(configModel);
