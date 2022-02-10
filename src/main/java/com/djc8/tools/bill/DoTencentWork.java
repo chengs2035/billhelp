@@ -81,10 +81,15 @@ public class DoTencentWork {
             // 实例化一个请求对象,每个接口都会对应一个request对象
 
             VatInvoiceOCRRequest req = new VatInvoiceOCRRequest();
+            //是否pdf,后续版本去掉了这参数.
             req.setIsPdf(true);
+            //pdf页数,后续版本去掉了这参数
             req.setPdfPageNumber(1L);
+
             req.setImageBase64(pdfbase64);
+            //慢速模式,强制休眠1秒
             Thread.sleep(1000);
+
             return  client.VatInvoiceOCR(req);
 
         } catch (TencentCloudSDKException | InterruptedException e) {

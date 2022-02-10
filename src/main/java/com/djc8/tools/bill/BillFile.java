@@ -41,6 +41,7 @@ public class BillFile {
     public static void outResponseByString(String writeString,String filename) throws IOException {
         FileWriter fw=new FileWriter(new File(filename));
         BufferedWriter bw=new BufferedWriter(fw);
+
         bw.write(writeString);
         bw.close();
         fw.close();

@@ -22,4 +22,6 @@ public class ConfigModel {
      * 增加输出文件名称带日期的,可方便整理,格式:日期_发票编号_金额
      */
     String addOutFileDate;
+
+
 }

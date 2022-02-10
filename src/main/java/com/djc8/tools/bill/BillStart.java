@@ -16,8 +16,9 @@ public class BillStart {
      * start前置
      */
     public static void preStart(){
-        String userdir=System.getProperty("user.dir");
-        String fileStr=userdir+File.separator+"config.json";
+        String userDir=System.getProperty("user.dir");
+        //配置文件
+        String fileStr=userDir+File.separator+"config.json";
 
         if(new File(fileStr).exists()){
             ConfigModel configModel=BillJson.readConfig(fileStr);
@@ -35,6 +36,7 @@ public class BillStart {
 
         }else{
             System.out.println("config.json配置文件不存在,程序退出");
+
         }
     }
 
@@ -78,9 +80,10 @@ public class BillStart {
             }
             try {
                 String respString=VatInvoiceOCRResponse.toJsonString(resp);
-
+                
                 //输出返回的报文为文件.
                 BillFile.outResponseByString(respString,fileBak+File.separator+file.getName()+".json");
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
