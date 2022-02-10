@@ -39,4 +39,4 @@ windows路径默认采用` \ `,json处理的时候会当作转义字符,所以�
 `"logpath":"D:\\output\\log\\"`
 
 # 联系
-[这里联系我][https://djc8.cn/archives/pdf-use-tencent-cloud-bill-recognition-interface-to-automatically-modify-the-pdf-file-name.html]
+[这里联系我](https://djc8.cn/archives/pdf-use-tencent-cloud-bill-recognition-interface-to-automatically-modify-the-pdf-file-name.html)
