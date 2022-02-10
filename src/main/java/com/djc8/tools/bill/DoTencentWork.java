@@ -5,11 +5,57 @@ import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.common.profile.ClientProfile;
 import com.tencentcloudapi.common.profile.HttpProfile;
 import com.tencentcloudapi.ocr.v20181119.OcrClient;
+import com.tencentcloudapi.ocr.v20181119.models.TextVatInvoice;
 import com.tencentcloudapi.ocr.v20181119.models.VatInvoiceOCRRequest;
 import com.tencentcloudapi.ocr.v20181119.models.VatInvoiceOCRResponse;
 
+import java.util.Arrays;
+import java.util.function.Predicate;
+
 public class DoTencentWork {
 
+    /**
+     * 将resp抓换为billmodel
+     * @param resp
+     * @return
+     */
+    public static BillModel transBillModel(VatInvoiceOCRResponse resp){
+        BillModel bm=new BillModel();
+
+        Arrays.stream(resp.getVatInvoiceInfos()).filter(new Predicate<TextVatInvoice>() {
+            @Override
+            public boolean test(TextVatInvoice textVatInvoice) {
+                if(textVatInvoice.getName().equals("发票号码") ||
+                        textVatInvoice.getName().equals("开票日期") ||
+                        textVatInvoice.getName().equals("购买方名称")||
+                        textVatInvoice.getName().equals("购买方识别号")||
+                        textVatInvoice.getName().equals("小写金额")||
+                        textVatInvoice.getName().equals("价税合计(大写)")||
+                        textVatInvoice.getName().equals("货物或应税劳务、服务名称"))
+                    return true;
+                return false;
+            }
+        }).forEach(e->{
+
+            if(e.getName().equals("发票号码")){
+                bm.setBillNo(e.getValue());
+            }else if(e.getName().equals("开票日期")){
+                bm.setBillDate((e.getValue()));
+            }else if(e.getName().equals("购买方名称")){
+                bm.setBuyName(e.getValue());
+            }else if(e.getName().equals("购买方识别号")){
+                bm.setBuyNo(e.getValue());
+            }else if(e.getName().equals("小写金额")){
+                bm.setLessAmot(e.getValue());
+            }else if(e.getName().equals("价税合计(大写)")){
+                bm.setUpAmot(e.getValue());
+            }else if(e.getName().equals("货物或应税劳务、服务名称")){
+                bm.setItemName(e.getValue());
+            }
+
+        });
+        return bm;
+    }
     /**
      * ocr票据识别,只需要传入一个pdf的base64位编码就行了
      * @param pdfbase64
