@@ -37,3 +37,6 @@ logpath:可用于指定运行日志存储的位置,如果没有指定,则默认�
 # windows路径
 windows路径默认采用` \ `,json处理的时候会当作转义字符,所以需要增加一个` \ `,变成`\\`,比如:
 `"logpath":"D:\\output\\log\\"`
+
+# 联系
+[这里联系我][https://djc8.cn/archives/pdf-use-tencent-cloud-bill-recognition-interface-to-automatically-modify-the-pdf-file-name.html]
