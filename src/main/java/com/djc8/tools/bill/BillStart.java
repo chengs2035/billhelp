@@ -36,7 +36,6 @@ public class BillStart {
 
         }else{
             System.out.println("config.json配置文件不存在,程序退出");
-
         }
     }
 
@@ -80,7 +79,7 @@ public class BillStart {
             }
             try {
                 String respString=VatInvoiceOCRResponse.toJsonString(resp);
-                
+
                 //输出返回的报文为文件.
                 BillFile.outResponseByString(respString,fileBak+File.separator+file.getName()+".json");
 
