@@ -1,20 +1,21 @@
 package com.djc8.tools.bill;
 
-import com.tencentcloudapi.ocr.v20181119.models.TextVatInvoice;
 import com.tencentcloudapi.ocr.v20181119.models.VatInvoiceOCRResponse;
 
 import java.io.*;
-import java.nio.channels.FileChannel;
 import java.util.*;
-
-import java.util.function.Predicate;
 
 public class BillStart {
 
 
     public static void main(String[] args) {
+        preStart();
+    }
 
-
+    /**
+     * start前置
+     */
+    public static void preStart(){
         String userdir=System.getProperty("user.dir");
         String fileStr=userdir+File.separator+"config.json";
 
@@ -27,6 +28,7 @@ public class BillStart {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+
             System.out.println(configModel);
 
             start(configModel);
@@ -34,12 +36,12 @@ public class BillStart {
         }else{
             System.out.println("config.json配置文件不存在,程序退出");
         }
-
-
-        //获取配置文件
-
     }
 
+    /**
+     * start
+     * @param config
+     */
     public static void start(ConfigModel config){
         File f=new File(config.getPdfpath());
         if(!f.exists()) {
@@ -76,7 +78,7 @@ public class BillStart {
             }
             try {
                 String respString=VatInvoiceOCRResponse.toJsonString(resp);
-              //  System.out.println(respString);
+
                 //输出返回的报文为文件.
                 BillFile.outResponseByString(respString,fileBak+File.separator+file.getName()+".json");
             } catch (IOException e) {
@@ -98,33 +100,20 @@ public class BillStart {
 
     }
 
-    private static int getSuccessFileNumber(ConfigModel config, String fileBak, int successFileNumber, File file, BillModel bm) {
-        //构建输出的文件
-        File outF=new File(fileBak + bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf");
-        File outF_date=new File(fileBak + bm.getBillDate().replaceAll("年","").replaceAll("月","").replaceAll("日","")+"_"+ bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf");
-        //重命名文件到back目录
-        FileChannel inputChannel=null;
-        FileChannel outChannel=null;
 
-        try{
-            inputChannel = new FileInputStream(file).getChannel();
-            outChannel=new FileOutputStream(outF).getChannel();
+    private static int getSuccessFileNumber(ConfigModel config, String fileBak, int successFileNumber, File infile, BillModel bm) {
 
-            outChannel.transferFrom(inputChannel,0,inputChannel.size());
+        String outFileName=fileBak + bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
+        String outFileName_date=fileBak + bm.getBillDate().replaceAll("年","").replaceAll("月","").replaceAll("日","")+"_"+ bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
 
-            if("add_date".equals(config.addOutFileDate)){
-                outChannel=new FileOutputStream(outF_date).getChannel();
-                inputChannel = new FileInputStream(file).getChannel();
-                outChannel.transferFrom(inputChannel,0,inputChannel.size());
-            }
+        boolean flag=false;
+        flag=BillFile.copyByChannel(infile.getAbsolutePath(),outFileName);
 
+        if("add_date".equals(config.addOutFileDate)){
+            flag=flag&&BillFile.copyByChannel(infile.getAbsolutePath(),outFileName_date);
+        }
+        if(flag){
             successFileNumber++;
-        } catch (FileNotFoundException fileNotFoundException) {
-            fileNotFoundException.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally{
-
         }
         return successFileNumber;
     }

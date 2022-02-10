@@ -1,6 +1,7 @@
 package com.djc8.tools.bill;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -85,5 +86,25 @@ public class BillFile {
             }
         }
         return null;
+    }
+    /**
+     * Channel方式拷贝文件,加速文件流传输
+     * @param srcFile
+     * @param descFile
+     */
+    public static boolean copyByChannel(String srcFile,String descFile){
+        File outF=new File(descFile);
+        File inF=new File(srcFile);
+        FileChannel inputChannel=null;
+        FileChannel outChannel=null;
+        try{
+            inputChannel=new FileInputStream(inF).getChannel();
+            outChannel=new FileOutputStream(outF).getChannel();
+            outChannel.transferFrom(inputChannel,0,inputChannel.size());
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 }
