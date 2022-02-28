@@ -96,10 +96,11 @@ public class BillStart {
                 continue;
             }
             successFileNumber = getSuccessFileNumber(config, fileBak, successFileNumber, file, bm);
+            //
+
         }
         System.out.println("==================任务结束===================");
         System.out.println("获取到"+fs.size()+"个pdf文件,成功处理"+successFileNumber+"个文件");
-
     }
 
 
@@ -107,7 +108,7 @@ public class BillStart {
 
         String outFileName=fileBak + bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
         String outFileName_date=fileBak + bm.getBillDate().replaceAll("年","").replaceAll("月","").replaceAll("日","")+"_"+ bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
-
+        String outSignName=fileBak+bm.getBillNo()+"_"+bm.getLessAmot()+"_sign.pdf";
         boolean flag=false;
         flag=BillFile.copyByChannel(infile.getAbsolutePath(),outFileName);
 
@@ -117,6 +118,14 @@ public class BillStart {
         if(flag){
             successFileNumber++;
         }
+        if(config.getCopy_sign_file()!=null && config.getCopy_sign_file().length>0){
+            //随机获取一个签名
+            Random r=new Random();
+            int i=r.nextInt(config.getCopy_sign_file().length);
+            flag=BillFile.copyByChannel(config.getCopy_sign_file()[i],outSignName);
+        }
+
+
         return successFileNumber;
     }
 
