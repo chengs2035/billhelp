@@ -38,6 +38,11 @@ logpath:可用于指定运行日志存储的位置,如果没有指定,则默认�
 windows路径默认采用` \ `,json处理的时候会当作转义字符,所以需要增加一个` \ `,变成`\\`,比如:
 `"logpath":"D:\\output\\log\\"`
 
+# 合并pdf
+拷贝出来的文件现在可以自动合并了，省却了再用软件合并的烦恼
+参数添加：
+`"isMergePdf":"true"`即可
+
 # 联系
 [这里联系我](https://djc8.cn/archives/pdf-use-tencent-cloud-bill-recognition-interface-to-automatically-modify-the-pdf-file-name.html)
 

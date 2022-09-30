@@ -5,11 +5,17 @@ import com.tencentcloudapi.ocr.v20181119.models.VatInvoiceOCRResponse;
 import java.io.*;
 import java.util.*;
 
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+
 public class BillStart {
 
 
     public static void main(String[] args) {
         preStart();
+    	
     }
 
     /**
@@ -99,6 +105,16 @@ public class BillStart {
             //
 
         }
+        //合并
+        if("true".equals(config.getIsMergePdf())) {
+        	try {
+				mergePDF(fileBak+"/merge_tmp/");
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+        	
+        }
         System.out.println("==================任务结束===================");
         System.out.println("获取到"+fs.size()+"个pdf文件,成功处理"+successFileNumber+"个文件");
     }
@@ -109,11 +125,19 @@ public class BillStart {
         String outFileName=fileBak + bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
         String outFileName_date=fileBak + bm.getBillDate().replaceAll("年","").replaceAll("月","").replaceAll("日","")+"_"+ bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
         String outSignName=fileBak+bm.getBillNo()+"_"+bm.getLessAmot()+"_sign.pdf";
+        String outFileName_merge=fileBak+"/merge_tmp/" + bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
+        String outSignName_merge=fileBak+"/merge_tmp/" +bm.getBillNo()+"_"+bm.getLessAmot()+"_sign.pdf";
         boolean flag=false;
         flag=BillFile.copyByChannel(infile.getAbsolutePath(),outFileName);
 
         if("add_date".equals(config.addOutFileDate)){
             flag=flag&&BillFile.copyByChannel(infile.getAbsolutePath(),outFileName_date);
+        }
+        /**
+         * 自动合并pdf
+         */
+        if("true".equals(config.getIsMergePdf())) {
+        	flag=flag&&BillFile.copyByChannel(infile.getAbsolutePath(),outFileName_merge);
         }
         if(flag){
             successFileNumber++;
@@ -123,11 +147,34 @@ public class BillStart {
             Random r=new Random();
             int i=r.nextInt(config.getCopy_sign_file().length);
             flag=BillFile.copyByChannel(config.getCopy_sign_file()[i],outSignName);
+            
+            if("true".equals(config.getIsMergePdf())) {
+            	flag=BillFile.copyByChannel(config.getCopy_sign_file()[i],outSignName_merge);
+
+            }
         }
 
 
         return successFileNumber;
     }
+    /**
+     * 合并pdf
+     * @return
+     */
+    private static int mergePDF(String path) throws IOException{
 
+    	PDFMergerUtility pdfMerger= new PDFMergerUtility();
+    	File f=new File(path);
+    	
+    	File[] pdffiles=f.listFiles();
+    	
+    	for (File file : pdffiles) {
+    		pdfMerger.addSource(file);
+		}
+
+    	pdfMerger.setDestinationFileName(path+"\\merger.pdf");
+    	pdfMerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+    	return 0;
+    }
 
 }
