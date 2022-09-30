@@ -40,3 +40,7 @@ windows路径默认采用` \ `,json处理的时候会当作转义字符,所以�
 
 # 联系
 [这里联系我](https://djc8.cn/archives/pdf-use-tencent-cloud-bill-recognition-interface-to-automatically-modify-the-pdf-file-name.html)
+
+
+
+[![Java CI with Maven](https://github.com/chengs2035/billhelp/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/chengs2035/billhelp/actions/workflows/maven.yml)
