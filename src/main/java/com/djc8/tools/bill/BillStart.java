@@ -51,6 +51,8 @@ public class BillStart {
      */
     public static void start(ConfigModel config){
         File f=new File(config.getPdfpath());
+        
+        
         if(!f.exists()) {
             System.out.println(config.getPdfpath()+"路径不存在,程序退出");
             return;
@@ -61,6 +63,11 @@ public class BillStart {
 
         if(!bakFile.exists()){
             bakFile.mkdirs();
+        }
+        String fileBakMergeTmp=fileBak+"merge_tmp"+File.separator;
+        File fmerge=new File(fileBakMergeTmp);
+        if(!fmerge.exists()){
+        	fmerge.mkdirs();
         }
         //从指定目录下取所有的pdf出来并且遍历
         List<File> fs= BillFile.getFiles(config.getPdfpath());
@@ -101,14 +108,16 @@ public class BillStart {
                 System.out.println("失败文件:"+file.getAbsolutePath());
                 continue;
             }
-            successFileNumber = getSuccessFileNumber(config, fileBak, successFileNumber, file, bm);
+            
+            successFileNumber = getSuccessFileNumber(config, fileBak, successFileNumber, file, bm,fileBakMergeTmp);
             //
 
         }
         //合并
         if("true".equals(config.getIsMergePdf())) {
+
         	try {
-				mergePDF(fileBak+"/merge_tmp/");
+				mergePDF(fileBakMergeTmp);
 			} catch (IOException e) {
 				
 				e.printStackTrace();
@@ -120,13 +129,13 @@ public class BillStart {
     }
 
 
-    private static int getSuccessFileNumber(ConfigModel config, String fileBak, int successFileNumber, File infile, BillModel bm) {
+    private static int getSuccessFileNumber(ConfigModel config, String fileBak, int successFileNumber, File infile, BillModel bm,String fileBakMergeTmp) {
 
         String outFileName=fileBak + bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
         String outFileName_date=fileBak + bm.getBillDate().replaceAll("年","").replaceAll("月","").replaceAll("日","")+"_"+ bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
         String outSignName=fileBak+bm.getBillNo()+"_"+bm.getLessAmot()+"_sign.pdf";
-        String outFileName_merge=fileBak+"/merge_tmp/" + bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
-        String outSignName_merge=fileBak+"/merge_tmp/" +bm.getBillNo()+"_"+bm.getLessAmot()+"_sign.pdf";
+        String outFileName_merge=fileBakMergeTmp + bm.getBillNo()+"_"+ bm.getLessAmot()+".pdf";
+        String outSignName_merge=fileBakMergeTmp +bm.getBillNo()+"_"+bm.getLessAmot()+"_sign.pdf";
         boolean flag=false;
         flag=BillFile.copyByChannel(infile.getAbsolutePath(),outFileName);
 
@@ -162,7 +171,7 @@ public class BillStart {
      * @return
      */
     private static int mergePDF(String path) throws IOException{
-
+    	
     	PDFMergerUtility pdfMerger= new PDFMergerUtility();
     	File f=new File(path);
     	
